@@ -1,0 +1,168 @@
+/*
+Copyright IBM Corp. 2016 All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+		 http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package pbft;
+
+/*
+ * mapping to PBFT paper names
+ *
+ * PBFT name: local name
+ *
+ * o: transaction
+ * t: timestamp
+ * c: client
+ * v: view
+ * n: sequenceNumber
+ * D(m): requestDigest
+ * i: replicaId
+ */
+
+message message {
+    oneof payload {
+        request_batch request_batch = 1;
+        pre_prepare pre_prepare = 2;
+        prepare prepare = 3;
+        commit commit = 4;
+        checkpoint checkpoint = 5;
+        view_change view_change = 6;
+        new_view new_view = 7;
+        fetch_request_batch fetch_request_batch = 8;
+        request_batch return_request_batch = 9;
+        want_view_change want_view_change = 10;
+    }
+}
+
+message request {
+    google.protobuf.Timestamp timestamp = 1;  // Generated at the client level. Ensures that client's requests are atomically ordered.
+    bytes payload = 2;  // opaque payload
+    uint64 replica_id = 3;
+    bytes signature = 4;
+}
+
+message pre_prepare {
+    uint64 view = 1;
+    uint64 sequence_number = 2;
+    string batch_digest = 3;
+    request_batch request_batch = 4;
+    uint64 replica_id = 5;
+    bytes attestation = 6;
+}
+
+message prepare {
+    uint64 view = 1;
+    uint64 sequence_number = 2;
+    string batch_digest = 3;
+    uint64 replica_id = 4;
+    bytes attestation = 5;
+}
+
+message commit {
+    uint64 view = 1;
+    uint64 sequence_number = 2;
+    string batch_digest = 3;
+    uint64 replica_id = 4;
+    bytes attestation = 6;
+}
+
+message block_info {
+    uint64 block_number = 1;
+    bytes block_hash = 2;
+}
+
+message checkpoint {
+    uint64 sequence_number = 1;
+    uint64 replica_id = 2;
+    string id = 3;
+}
+
+message want_view_change {
+    uint64 view = 1;
+    bytes nonce = 2;
+    uint64 id = 3;
+}
+message view_change {
+    message C {
+       checkpoint checkpoint = 1; 
+    }
+    message PQ {
+      uint64 seqNo = 1;
+      repeated prepare prepare = 2;
+      repeated commit commit = 3;
+      bytes h = 4; // corresponding hist log
+      bytes a = 5; // corresponding comm log
+      string batch_digest = 6;
+      uint64 view = 7;
+    }
+    message Att {
+      uint64 view = 1;
+      uint64 seqNo = 2;
+      bytes attestation = 3;
+    }
+
+    uint64 view = 1;
+    uint64 h = 2;
+    repeated C cset = 3;
+    repeated PQ pset = 4;
+    repeated PQ qset = 5;
+    repeated Att bset = 8; // abandon view
+    repeated want_view_change wset = 11; // wset
+    uint64 replica_id = 6;
+    bytes signature = 7;
+    bytes attestation = 10;
+    uint64 old_view = 12;  // vfrom
+}
+
+message PQset {
+    repeated view_change.PQ set = 1;
+}
+
+message new_view {
+    uint64 view = 1;
+    repeated view_change vset = 2;
+    map<uint64, string> xset = 3;
+    uint64 replica_id = 4;
+    bytes attestation = 5;
+}
+
+message fetch_request_batch {
+    string batch_digest = 1;
+    uint64 replica_id = 2;
+}
+
+// batch
+
+message request_batch {
+    repeated request batch = 1;
+};
+
+message batch_message {
+    oneof payload {
+        request request = 1;
+        request_batch request_batch = 2;
+        bytes pbft_message = 3;
+        request complaint = 4;    // like request, but processed everywhere
+    }
+}
+
+// consensus metadata
+
+message metadata {
+    uint64 seqNo = 1;
+}
