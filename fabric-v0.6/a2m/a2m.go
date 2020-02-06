@@ -1,6 +1,5 @@
 package a2m
 
-
 import "math/rand"
 
 // //go:generate moq -out am2_impl.go . A2MInterface
