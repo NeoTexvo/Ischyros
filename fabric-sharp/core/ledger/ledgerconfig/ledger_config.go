@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+
 //IsCouchDBEnabled exposes the useCouchDB variable
 func IsCouchDBEnabled() bool {
 	stateDatabase := viper.GetString("ledger.state.stateDatabase")

@@ -9,6 +9,7 @@ import (
 	sc "github.com/hyperledger/fabric/protos/peer"
 )
 
+
 type Analytic struct {
 }
 
