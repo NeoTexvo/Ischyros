@@ -11,6 +11,7 @@ import (
 	"encoding/hex"
 )
 
+
 func init() {
 	// This is just to satisfy the code coverage tool
 	// miss any methods

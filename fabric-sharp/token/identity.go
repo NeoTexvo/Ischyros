@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 
 package token
 
+
 //go:generate counterfeiter -o client/mock/identity.go -fake-name Identity . Identity
 
 // Identity refers to the creator of a tx;
