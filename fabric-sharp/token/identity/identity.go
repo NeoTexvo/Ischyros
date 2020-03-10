@@ -10,6 +10,7 @@ import (
 	"github.com/hyperledger/fabric/msp"
 )
 
+
 // IssuingValidator is used to establish if the creator can issue tokens of the passed type.
 type IssuingValidator interface {
 	// Validate returns no error if the passed creator can issue tokens of the passed type,, an error otherwise.

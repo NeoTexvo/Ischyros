@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	// The current operating system does not provide the required data for user lookups.
+	// The  current operating system does not provide the required data for user lookups.
 	ErrUnsupported = errors.New("user lookup: operating system does not provide passwd-formatted data")
 	// No matching entries found in file.
 	ErrNoPasswdEntries = errors.New("no matching entries in passwd file")

@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 
 package privdata
 
+
 import (
 	"github.com/hyperledger/fabric/core/ledger"
 	"github.com/hyperledger/fabric/core/transientstore"
